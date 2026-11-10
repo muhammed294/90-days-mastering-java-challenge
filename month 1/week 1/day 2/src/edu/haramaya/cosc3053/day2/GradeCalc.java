@@ -1,4 +1,4 @@
-package edu.haramaya.cosc3053.day1;
+package edu.haramaya.cosc3053.day2;
 import java.util.*;
 
 public class GradeCalc {
