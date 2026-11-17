@@ -1,61 +1,67 @@
 package edu.haramaya.cosc3053.day6;
 
 public class BankAccount {
-
-    // 1.1 Private encapsulated fields
-    private final String accountNumber;   // read-only after creation
+    // TODO 5.1: private encapsulated fields
+    private final String accountNumber;
     private String accountHolder;
     private double balance;
+    private static final double MINIMUM_BALANCE = 25.00;
 
-    // 1.2 Constructor with defensive validation
-    public BankAccount(String accountNumber, String accountHolder, double initialBalance) {
+    // TODO 5.2: constructor with defensive validation
+    public BankAccount(String accountNumber, String accountHolder, double initialDeposit) {
         if (accountNumber == null || accountNumber.isBlank()) {
             throw new IllegalArgumentException("Account number cannot be null or blank.");
         }
         if (accountHolder == null || accountHolder.isBlank()) {
             throw new IllegalArgumentException("Account holder cannot be null or blank.");
         }
-        if (initialBalance < 0.0) {
-            throw new IllegalArgumentException("Initial balance cannot be negative.");
+        if (initialDeposit < MINIMUM_BALANCE) {
+            throw new IllegalArgumentException("Initial deposit must be at least $25.00.");
         }
         this.accountNumber = accountNumber;
         this.accountHolder = accountHolder;
-        this.balance = initialBalance;
+        this.balance = initialDeposit;
     }
 
-    // 1.3 Deposit: amount must be > 0.0
+    // TODO 5.3: deposit
     public boolean deposit(double amount) {
         if (amount <= 0.0) {
-            System.out.printf("❌ [REJECTED] Deposit $%.2f into %s -> Amount must be positive.%n",
-                    amount, accountNumber);
+            System.out.printf("❌ [REJECTED] Deposit of $%.2f denied: amount must be positive.%n", amount);
             return false;
         }
         balance += amount;
-        System.out.printf("✅ [SUCCESS] Deposited $%.2f into %s -> New Balance: $%.2f%n",
-                amount, accountNumber, balance);
+        System.out.printf("✅ [SUCCESS] Deposited $%.2f -> New Balance: $%.2f%n", amount, balance);
         return true;
     }
 
-    // 1.4 Withdraw: amount must be > 0.0 and <= balance
+    // TODO 5.4: withdraw
     public boolean withdraw(double amount) {
         if (amount <= 0.0) {
-            System.out.printf("❌ [REJECTED] Withdraw $%.2f from %s -> Amount must be positive.%n",
-                    amount, accountNumber);
+            System.out.printf("❌ [REJECTED] Withdrawal of $%.2f denied: amount must be positive.%n", amount);
             return false;
         }
-        if (amount > balance) {
-            System.out.printf("❌ [REJECTED] Withdraw $%.2f from %s -> Overdraft Blocked! Balance ($%.2f)%n",
-                    amount, accountNumber, balance);
+        if (balance - amount < MINIMUM_BALANCE) {
+            System.out.printf("❌ [REJECTED] Withdrawal of $%.2f denied: Remaining balance ($%.2f) would fall below $25.00 minimum balance requirement.%n",
+                    amount, balance - amount);
             return false;
         }
         balance -= amount;
-        System.out.printf("✅ [SUCCESS] Withdrew $%.2f from %s -> New Balance: $%.2f%n",
-                amount, accountNumber, balance);
+        System.out.printf("✅ [SUCCESS] Withdrew $%.2f -> New Balance: $%.2f%n", amount, balance);
         return true;
     }
 
-    // 1.5 Getters only (NO setBalance!)
-    public String getAccountNumber() { return accountNumber; }
-    public String getAccountHolder() { return accountHolder; }
-    public double getBalance() { return balance; }
+    public double getBalance() {
+        return balance;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public static void main(String[] args) {
+        BankAccount acc = new BankAccount("ACC-101", "Abebe Bekele", 500.00);
+        acc.deposit(150.00);
+        acc.withdraw(100.00);
+        acc.withdraw(600.00); // Should fail minimum balance check ($25.00)
+    }
 }
