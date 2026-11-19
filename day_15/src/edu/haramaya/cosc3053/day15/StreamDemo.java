@@ -1,6 +1,7 @@
 package edu.haramaya.cosc3053.day15;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StreamDemo {
     public record Student(String name, String dept, double gpa) {}
@@ -19,6 +20,13 @@ public class StreamDemo {
                 .average()
                 .orElse(0.0);
 
+        List<String> names = roster.stream()
+                .map(Student::name)
+                .sorted()
+                .collect(Collectors.toList());
+
         System.out.printf("CS Average GPA: %.2f%n", avgGpa);
+        System.out.println(names);
+
     }
 }
